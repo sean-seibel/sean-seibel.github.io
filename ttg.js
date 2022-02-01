@@ -27,6 +27,9 @@ function updateDisplay(gt) {
     if (gt.winner) {
         document.getElementById("black").style.cssText = P1_CSS_NOBORDER;
         document.getElementById("white").style.cssText = P2_CSS_NOBORDER;
+        white.innerHTML = ws;
+        black.innerHTML = bs;
+        document.getElementById("handicap").innerHTML = "";
         if (gt.winner == PLAYER1) {
             document.getElementById("black").style.cssText += "box-shadow: 0px 0px 40px 20px #FF0";
         } else if (gt.winner == PLAYER2) {
