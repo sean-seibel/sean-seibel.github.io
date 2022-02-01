@@ -1,0 +1,73 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    background-color: #b8778c;
+    padding: 0px;
+    margin: 0px;
+}
+
+
+#game {
+    height: 80vh;
+    width: 80vw;
+    display: flex;
+    flex-direction: row;
+    margin: 20px;
+    align-content: center;
+}
+
+#board {
+    height: 100%;
+    width: 50%;
+    border: 5px solid saddlebrown;
+    border-radius: 20px;
+    background-color: burlywood;
+}
+
+#pad {
+    width: 10%;
+}
+
+#sidebar {
+    height: 100%;
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+}
+
+#black, #white {
+    font-size: 7.5vh;
+    background-color: #e5e5e5;
+    border-radius: 10px;
+}
+
+#white {
+    text-align: right;
+}
+
+#head_bar {
+    background-color: deepskyblue;
+    text-align: center;
+    margin: 0;  
+}
+
+#score_div {
+    text-align: center;
+}
+
+#handicap {
+    font-size: 4vh;
+}
+
+#black_score, #dash, #white_score {
+    font-size: 15vh;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+#title {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    line-height: 10px
+}
