@@ -330,6 +330,30 @@ class GameTracker {
 
         return retList;
     }
+
+    writeThreeConnectNumbers() {
+        if (this.lastThreeList) {
+            let blackCount = 1;
+            let whiteCount = 1;
+            for(let i = 0; i < this.lastThreeList.length; i++) {
+                if (this.lastThreeList[i].value == PLAYER1) {
+                    this.lastThreeList[i].writeOn(blackCount, this.spaceArray, PLAYER2);
+                    blackCount++;
+                } else {
+                    this.lastThreeList[i].writeOn(whiteCount, this.spaceArray, PLAYER1);
+                    whiteCount++;
+                }
+            }
+        }
+    }
+
+    removeThreeConnectNumbers() {
+        for (let x = 0; x < this.spaceArray.length; x++) {
+            for (let y = 0; y < this.spaceArray[x].length; y++) {
+                this.spaceArray[x][y].removeTextFromPiece();
+            }
+        }    
+    }
 }
 
 class Line {
@@ -434,6 +458,32 @@ class Connect {
         return new Line(m, this.x, this.y);
     }
 
+    writeOn(str, spaceArray, col) {
+        let dx = 0;
+        let dy = 0;
+        switch (this.dir) {
+            case "ne":
+                dx = 1;
+                dy = -1;
+                break;
+            case "e":
+                dx = 1;
+                break;
+            case "se": 
+                dx = 1;
+                dy = 1;
+                break;
+            case "s": 
+                dy = 1;
+                break;
+        }
+
+        for (let i = 0; i < this.n; i++) {
+            spaceArray[this.x + i*dx][this.y + i*dy].writeTextOnPiece(str, col);
+        }
+
+    }
+
     //int int [][] (no checks for oob)
     static allConnectRows(x, y, val, array) {
         const eqThis = array[x][y];
@@ -526,7 +576,10 @@ class Space {
             box-sizing: border-box;
             -moz-box-sizing: border-box;
             -webkit-box-sizing: border-box;
-            border:5px solid #FFDD00;`;
+            border:5px solid #FFDD00;
+            display: flex;
+            align-items: center;
+            justify-content: center;`;
             this.node.appendChild(piece);
             this.color = color;
 
@@ -536,18 +589,26 @@ class Space {
     }
 
     setPiece() {
-        this.node.firstChild.style.cssText = `width:91%; height:91%; background-color:${this.color}; border-radius: 20%;`;
+        this.node.firstChild.style.cssText = 
+        `width:91%; height:91%; background-color:${this.color}; border-radius: 20%;
+        display: flex;
+        align-items: center;
+        justify-content: center;`;
     }
 
     writeTextOnPiece(s, col) {
         this.textOn = document.createElement("label");
         this.textOn.innerHTML = s;
-        this.textOn.style.cssText = `color:${col}`;
-        this.node.firstChild.appendChild(text);
+        this.textOn.style.cssText = `color:${col};`;
+        this.node.firstChild.appendChild(this.textOn);
     }
 
     removeTextFromPiece() {
-        this.node.firstChild.removeChild(this.textOn);
+        if (this.node.firstChild) {
+            while(this.node.firstChild.firstChild) {
+                this.node.firstChild.removeChild(this.node.firstChild.firstChild);
+            }
+        }
     }
 
     drawPossibleMove(gt) {
@@ -579,6 +640,13 @@ const spaces = drawBoardOn(board, gameTracker);
 gameTracker.setSpaceArray(spaces);
 //console.log(new Connect(3,0,"s",3,"black").overlaps(new Connect(3,1,"s",3,"black")));
 //console.log()
+function toggleShowThreeConnects(checkbox) {
+    if (!checkbox.checked) {
+        gameTracker.removeThreeConnectNumbers();
+    } else {
+        gameTracker.writeThreeConnectNumbers();
+    }
+}
 
 //DOM node, +number, +number --(create nodes on board)--> 2d array of spaces
 function drawBoardOn(node, gt) {
