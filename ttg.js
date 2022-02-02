@@ -62,6 +62,7 @@ class GameTracker {
     lastMoveX;
     lastMoveY;
     lastThreeList;
+    showingThreeConnects;
 
     //int int Space[][], color[]
     constructor(w, h, colCycle) {
@@ -85,6 +86,8 @@ class GameTracker {
         this.lastMoveY = -1;
 
         this.score = [0,HANDICAP];
+
+        this.showingThreeConnects = false;
 
         updateDisplay(this);
     }
@@ -147,6 +150,10 @@ class GameTracker {
 
             this.computeWinner();
             updateDisplay(this);
+            if (this.showingThreeConnects) {
+                this.removeThreeConnectNumbers();
+                this.writeThreeConnectNumbers();
+            }
         }
     }
 
@@ -344,6 +351,7 @@ class GameTracker {
                     whiteCount++;
                 }
             }
+            this.showingThreeConnects = true;
         }
     }
 
@@ -353,6 +361,7 @@ class GameTracker {
                 this.spaceArray[x][y].removeTextFromPiece();
             }
         }    
+        this.showingThreeConnects = false;
     }
 }
 
@@ -557,7 +566,6 @@ class Space {
     y;
     node;
     color;
-    textOn;
 
     constructor(x, y, node) {
         this.x = x;
@@ -597,10 +605,10 @@ class Space {
     }
 
     writeTextOnPiece(s, col) {
-        this.textOn = document.createElement("label");
-        this.textOn.innerHTML = s;
-        this.textOn.style.cssText = `color:${col};`;
-        this.node.firstChild.appendChild(this.textOn);
+        const text = document.createElement("label");
+        text.innerHTML = s;
+        text.style.cssText = `color:${col};`;
+        this.node.firstChild.appendChild(text);
     }
 
     removeTextFromPiece() {
