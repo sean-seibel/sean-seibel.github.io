@@ -3,6 +3,10 @@
     <head>
         <link href="style-ttg.css" rel="stylesheet">
         <meta charset="UTF-8">
+
+            <!-- DOM = Document Object Model :
+            allows javascript to interact with html elements -->
+        <script type="text/javascript" src="ttg.js" defer></script>
     </head>
     <body>
 
@@ -28,18 +32,14 @@
                 </div>  
                 <label id="white">&#160;WHITE&#160;</label>
                 <label><input type="checkbox" onclick="toggleShowThreeConnects(this);">Show three-connects</label>
-                <p>
-                    How to Play:
-                    Players take turns placing stones of their color in a square on the board, black goes first
-                    Scoring = total number of 4-in-a-rows + total number of <i>non-overlapping</i> 3-in-a-rows for each color
-                    For instance, a 5-in-a-row not connected to anything else would count for 3 points, for 2 different 4-in-a-rows, and the single 3-in-a-row which can fit without overlaps.
-                    White has a 1.5 point handicap for going second.
-                </p>
+                <p id="inst">
+                    How to Play:<br><br>
+                    · Players take turns placing stones of their color in a square on the board, black goes first.<br><br>
+                    · You may not place a stone beyond 2 spaces orthogonally or diagonally from the previous move, unless no such move exists.<br><br>
+                    · Scoring = total number of 4-in-a-rows + total number of <i>non-overlapping</i> 3-in-a-rows for each color.<br><br>
+                    · White has a 1.5 point handicap for going second.
+                </pre>
             </div>
         </div>        
     </body>
-            <!-- DOM = Document Object Model :
-    allows javascript to interact with html elements -->
-    <script type="text/javascript" src="ttg.js">
-    </script>
 </html>
