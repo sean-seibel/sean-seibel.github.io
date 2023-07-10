@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="dragula.min.css">
+        <link rel="stylesheet" href="output.css">
+
+        <title>Yousort</title>
+    </head>
+    <body>
+        <div class="w-screen h-screen">
+            <div id="top-bar" class="h-[15%] bg-orange-200 min-h-fit flex items-end border-b-2 border-black">
+                <p class="text-3xl p-[1%] w-[17%] font-extralight text-right">Yousort</p>
+                <div id="control-panel" class=" h-full w-full min-h-fit bg-gradient-to-br from-slate-50 via-slate-300 to-slate-300
+                                border-l-2 border-black
+                                overflow-y-auto">
+                    <div class="flex justify-around space-x-2 m-2">
+                        <div class="space-y-1">
+                            <pre class="text-center">Control Panel</pre>
+                            <div class="grid grid-flow-col justify-stretch space-x-1">
+                                <!-- <button id="build-button" class="disabled border-2 border-gray-900 bg-gray-300 text-gray-700 font-extrabold">🔨</button> -->
+                                <button id="start-button" class="border-2 border-green-900 bg-green-300 text-green-700">▶</button>
+                                <button id="step-button" class="border-2 border-green-900 bg-green-300 text-green-700 font-bold">(1)</button>
+                                <button id="stop-button" class="disabled border-2 border-red-900 bg-red-300 text-red-700">■</button>
+                                <button id="pause-button" class="disabled border-2 border-blue-900 bg-blue-300 text-blue-700 font-extrabold">||</button>
+                            </div>
+                            <div class="flex space-x-1">
+                                <p>Executing:&nbsp;</p>
+                                <p id="ptr"></p>
+                                <!-- <button id="refresh-button" class="border-2 border-blue-900 bg-blue-300 text-blue-700 font-[1000]">⟳</button> -->
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <button id="randomize-button">Randomize</button>
+                            <div class="flex justify-around space-x-2 m-2">
+                                <p>Selected Value:</p>
+                                <input id="value-input" type="number"></input>
+                                <button id="value-set" class="border-2 border-green-900 bg-green-300 text-green-800">&nbsp;Set&nbsp;</button>
+                            </div>
+                            <div class="flex justify-around space-x-2 m-2">
+                                <p id="length-label">Length:</p>
+                                <input id="length-input" type="number"></input>
+                                <button id="length-set" class="border-2 border-green-900 bg-green-300 text-green-800">&nbsp;Set&nbsp;</button>
+                                <pre>|</pre>
+                                <button id="length-remake" class="border-2 border-red-900 bg-red-300 text-red-800">&nbsp;↺&nbsp;</button>
+                                <button id="length-copy" class="border-2 border-blue-900 bg-blue-300 text-blue-800">&nbsp;⎘&nbsp;</button>
+                                <button id="length-import" class="border-2 border-blue-900 bg-blue-300 text-blue-800">&nbsp;✍&nbsp;</button>
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="grid grid-flow-col justify-stretch space-x-1">
+                                <button id="copy-button" class="border-2 border-orange-900 bg-orange-300 text-orange-700 text-3xl">⎘</button>
+                                <button id="paste-button" class="border-2 border-orange-900 bg-orange-300 text-orange-700 text-3xl">✍</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-start h-[85%]">
+                <div id="source" class="w-1/10 h-full bg-gray-400 p-5 space-y-3">
+                    INSTRUCTIONS
+                    <div class="expression sub flex justify-start bg-blue-300 rounded-md p-[2px]">
+                        <p class="pointer-events-none">(</p>
+                        <div class="min-h-full min-w-[15px] accepts1"></div>
+                        <select name="op" id="op-sel" class="appearance-none bg-inherit op-sel"></select>
+                        <div class="min-h-full min-w-[15px] accepts1"></div>
+                        <p class="pointer-events-none">)</p>
+                    </div>
+                    <div class="value sub flex justify-start bg-green-400 rounded-md p-[2px]">
+                        <p class="pointer-events-none">[</p>
+                        <div class="min-h-full min-w-[15px] accepts1"></div>
+                        <p class="pointer-events-none">]</p>
+                    </div>
+                    <div class="swap prim flex justify-start bg-pink-200 rounded-md w-fit p-[2px]">
+                        <span class="pointer-events-none whitespace-nowrap">swap (</span>
+                        <div class="min-h-full min-w-[15px] accepts1"></div>
+                        <span class="pointer-events-none whitespace-nowrap">) (</span>
+                        <div class="min-h-full min-w-[15px] accepts1"></div>
+                        <span class="pointer-events-none">)</span>
+                    </div>
+                    <div class="set prim flex justify-start bg-amber-400 rounded-md w-fit p-[2px]">
+                        <span class="pointer-events-none whitespace-nowrap">set [</span>
+                        <div class="min-h-full min-w-[15px] accepts1"></div>
+                        <span class="pointer-events-none whitespace-nowrap">] = (</span>
+                        <div class="min-h-full min-w-[15px] accepts1"></div>
+                        <span class="pointer-events-none">)</span>
+                    </div>
+                    <div class="store prim flex justify-start bg-purple-400 rounded-md w-fit p-[2px]">
+                        <div class="pointer-events-none">store&nbsp;</div>
+                        <pre class="val-input sub min-w-[15px] min-h-[20px] bg-white opacity-90 rounded-md text-center px-[2px] whitespace-nowrap" contenteditable="true"></pre>
+                        <div class="pointer-events-none whitespace-nowrap">&nbsp;← (</div>
+                        <div class="min-h-full min-w-[15px] accepts1"></div>
+                        <div class="pointer-events-none">)</div>
+                    </div>
+                    <div class="flag prim flex justify-start bg-orange-400 rounded-md w-fit p-[2px]">
+                        <div class="pointer-events-none">flag:&nbsp;</div>
+                        <pre class="val-input sub min-w-[15px] min-h-[20px] bg-white opacity-90 rounded-md text-center px-[2px] whitespace-nowrap" contenteditable="true"></pre>
+                    </div>
+                    <div class="jump prim flex justify-start bg-rose-300 rounded-md w-fit p-[2px]">
+                        <div class="pointer-events-none whitespace-nowrap">jump to&nbsp;</div>
+                        <pre class="val-input sub min-w-[15px] min-h-[20px] bg-white opacity-90 rounded-md text-center px-[2px] whitespace-nowrap" contenteditable="true"></pre>
+                    </div>
+                    <div class="jumpif prim flex justify-start bg-rose-400 rounded-md w-fit p-[2px]">
+                        <div class="pointer-events-none whitespace-nowrap">jump to&nbsp;</div>
+                        <pre class="val-input sub min-w-[15px] min-h-[20px] bg-white opacity-90 rounded-md text-center px-[2px] whitespace-nowrap" contenteditable="true"></pre>
+                        <div class="pointer-events-none whitespace-nowrap">&nbsp;if (</div>
+                        <div class="min-h-full min-w-[15px] accepts1"></div>
+                        <div class="pointer-events-none">)</div>
+                    </div>
+                </div>
+                <div class="h-full">
+                    <div class="h-full bg-gray-300">
+                        <p class="text-center h-[5%]">TEXT</p>
+                        <div id="text" class="accepts resize-x w-20 max-w-[20rem] h-[95%] overflow-auto px-5">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full h-full bg-green-50 flex justify-start">
+                    <div id="bar-zone" class="m-[3%] mr-0 h-[90%] w-[94%] bg-slate-300 p-[1%] flex justify-start">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="dragula.js"></script>
+        <script src="cookie.js"></script> 
+        <script src="setup.js"></script>
+        <script src="main.js"></script>
+    </body>
+</html>

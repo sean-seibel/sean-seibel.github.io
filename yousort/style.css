@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.no-font {
+    font-size: 0px;
+}
+
+.accepts1 {
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 0.375rem;
+}
+
+.disabled {
+    opacity: 35%;
+    pointer-events: none;
+}
+
+.highlighted, .highlighted * {
+    background-color:rgb(255, 255, 100) !important;
+}
+
+.select-bar {
+    background-color: rgb(255, 50, 50) !important;
+}
