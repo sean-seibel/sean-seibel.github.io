@@ -141,11 +141,10 @@ const _SUB_CODES = ['val-input', 'expression', 'value']
 
 const executeInstruction = () => {
     if (_needCompile) {
-        compileInstructions();
-        _needCompile = false;
+        _needCompile = !compileInstructions();
     }
 
-    if (_PTR >= _INSTRUCTIONS.length) {
+    if (_PTR >= _INSTRUCTIONS.length || _needCompile) {
         return;
     }
 
@@ -153,44 +152,63 @@ const executeInstruction = () => {
 
     const bar_l = bars.childNodes;
 
-    switch (command[0]) {
-        case _SWAP:
-            let i1 = computeSub(command[1], bar_l);
-            let i2 = computeSub(command[2], bar_l);
-            // let temp = _ARR[i1];
-            // _ARR[i1] = _ARR[i2];
-            // _ARR[i2] = temp;
-            let temp = bar_l[i1].getAttribute('value');
-            setBar(bar_l[i1], bar_l[i2].getAttribute('value'));
-            setBar(bar_l[i2], temp);
-            break;
-        case _SET:
-            // _ARR[
-            //     computeSub(command[1])
-            // ] = computeSub(command[2]);
-            setBar(bar_l[computeSub(command[1], bar_l)], computeSub(command[2], bar_l));
-            break;
-        case _STORE:
-            _VAR_TABLE.set(
-                command[1], // don't let them do this if its a number? bc you can't retrieve it
-                computeSub(command[2], bar_l)
-            )
-            break;
-        case _FLAG: break;
-        case _JUMP:
-            _PTR = _FLAG_TABLE.get(command[1]); // will drop you just after the flag
-            break;
-        case _JUMPIF:
-            if (computeSub(command[2], bar_l)) {
+    try {
+        switch (command[0]) {
+            case _SWAP:
+                let i1 = computeSub(command[1], bar_l);
+                let i2 = computeSub(command[2], bar_l);
+                if (i1 < 0 || i1 >= _LENGTHf()) { throw Error('Out of bounds. ' + i1 + ' not within [0, ' + _LENGTHf() + ')'); }
+                if (i2 < 0 || i2 >= _LENGTHf()) { throw Error('Out of bounds. ' + i2 + ' not within [0, ' + _LENGTHf() + ')'); }
+                let temp = bar_l[i1].getAttribute('value');
+                setBar(bar_l[i1], bar_l[i2].getAttribute('value'));
+                setBar(bar_l[i2], temp);
+                break;
+            case _SET:
+                let set_index = computeSub(command[1], bar_l);
+                if (set_index < 0 || set_index >= _LENGTHf()) { throw Error('Out of bounds. ' + set_index + ' not within [0, ' + _LENGTHf() + ')'); }
+                setBar(bar_l[computeSub(command[1], bar_l)], computeSub(command[2], bar_l));
+                break;
+            case _STORE:
+                if (Number.isInteger(+command[1])) { throw Error('Can not use number as a symbol. (' + command[1] + ')'); }
+                _VAR_TABLE.set(
+                    command[1], // don't let them do this if its a number? bc you can't retrieve it
+                    computeSub(command[2], bar_l)
+                );
+                break;
+            case _FLAG: break;
+            case _JUMP:
+                if (!_FLAG_TABLE.has(command[1])) { throw Error('Flag not found: ' + command[1]); }
                 _PTR = _FLAG_TABLE.get(command[1]); // will drop you just after the flag
-            }
-            break;
+                break;
+            case _JUMPIF:
+                if (!_FLAG_TABLE.has(command[1])) { throw Error('Flag not found: ' + command[1]); }
+                if (computeSub(command[2], bar_l)) {
+                    _PTR = _FLAG_TABLE.get(command[1]); // will drop you just after the flag
+                }
+                break;
+        }
+    } catch (err) { // name errors, out of bounds errors?
+        let msg = 'Runtime error at instruction ' + _PTR + ': ';
+        switch (command[0]) {
+            case _SWAP: msg += 'swap\n'; break;
+            case _SET: msg += 'set\n'; break;
+            case _STORE: msg += 'store\n'; break;
+            case _FLAG: msg += 'flag\n'; break;
+            case _JUMP: msg += 'jump\n'; break;
+            case _JUMPIF: msg += 'jumpif\n'; break;
+        }
+        msg += err;
+        alert(msg);
+        _PTR = 0; // if you errored restart it
+        _needCompile = true; // if you errored rewrite it
+        return false;
     }
 
     _PTR++;
     console.log(_ARRf());
     console.log(_VAR_TABLE);
     refresh(); // this might have to redraw bars if you use [set]
+    return true;
 };
 
 const computeSub = (sub, nodes) => {
@@ -199,26 +217,34 @@ const computeSub = (sub, nodes) => {
             if (Number.isInteger(+sub[1])) {
                 return Number(sub[1]);
             } else {
+                if (!_VAR_TABLE.has(sub[1])) { throw Error('Error: symbol not found: ' + sub[1]); }
                 return _VAR_TABLE.get(sub[1]);
             }
         case _EXPRESSION:
             let func = _FUNCS[sub[1]];
-            return func(computeSub(sub[2], bar_l), computeSub(sub[3], bar_l));
+            return func(computeSub(sub[2], nodes), computeSub(sub[3], nodes));
         case _VALUE:
-            return nodes(computeSub(sub[1], bar_l)).getAttribute('value');
+            return nodes[computeSub(sub[1], nodes)].getAttribute('value');
     }
 }
 
 const compileInstructions = () => {
     let instructions = [];
     const text = document.getElementById("text");
+    let failed = false;
     text.childNodes.forEach((node) => {
-        if (node?.classList) {
-            const inst = compileInstruction(node);
-            //console.log(inst);
-            instructions.push(inst);    
+        if (node?.classList && !failed) {
+            try {
+                const inst = compileInstruction(node);
+                //console.log(inst);
+                instructions.push(inst);    
+            } catch (err) {
+                alert('Compilation error: Error on instruction ' + instructions.length + '.\nMust fix before running.\n' + err);
+                failed = true;
+            }
         }
     });
+    if (failed) { return false; }
     _VAR_TABLE.clear();
     _VAR_TABLE.set("LENGTH", _LENGTH);
     _FLAG_TABLE.clear();
@@ -228,8 +254,10 @@ const compileInstructions = () => {
         }
     }
     //console.log(_FLAG_TABLE);
+    console.log(instructions);
     _INSTRUCTIONS = instructions;
     setCookie('i', JSON.stringify(_INSTRUCTIONS), 365);
+    return true;
 }
 
 const compileInstruction = (instNode) => {
@@ -275,6 +303,7 @@ const compileSubcomputation = (accept1) => {
     const operands = childrenWithClass(child, 'accepts1'); // only immediate children
     switch (cl) {
         case _VAL_INPUT:
+            if (!child.textContent) { throw Error('Empty input box'); }
             return [_VAL_INPUT, child.textContent];
         case _EXPRESSION:
             return [
@@ -338,6 +367,10 @@ const setStopActive = (active) => {
 let _RUN_ID = 0;
 
 const runWithDelay = (delay) => {
+    if (_needCompile) {
+        _needCompile = !compileInstructions();
+        if (_needCompile) { return; }
+    }
     _IDLE = false;
     setStopActive(true);
     console.log('running');
@@ -346,6 +379,10 @@ const runWithDelay = (delay) => {
 }
 
 const tick = (delay, run_id) => {
+    if (_needCompile) {
+        _needCompile = !compileInstructions();
+        if (_needCompile) { return; }
+    }
     if (_RUN_ID != run_id || _PTR >= _INSTRUCTIONS.length) {
         _IDLE = true;
         if (_PTR >= _INSTRUCTIONS.length) { _PTR = 0; /*refresh(false);*/ }
@@ -356,9 +393,13 @@ const tick = (delay, run_id) => {
         return;
     }
     highlight(_PTR);
-    const err = executeInstruction();
+    const err = !executeInstruction();
     if (err) {
-        alert('error');
+        _IDLE = true;
+        highlight(-1);
+        setStopActive(false);
+        refresh(false);
+        console.log('errored');
         return;
     }
     setTimeout(tick, delay, delay, run_id);
