@@ -304,3 +304,22 @@ const loadSub = (sub) => {
             return vnode;
     }
 };
+
+const _TIMES_STR = ['5.00', '3.00', '1.00', '0.75', '0.50', '0.30', '0.20', '0.10'];
+const _TIMES = _TIMES_STR.map((s) => {
+    return parseFloat(s) * 1000;
+});
+
+
+const timeSlider = document.getElementById('time-slider');
+const timeLabel = document.getElementById('time-display');
+
+timeSlider.max = _TIMES.length - 1;
+timeSlider.value = Math.floor(_TIMES.length / 2);
+let _DELAY = _TIMES[timeSlider.value];
+timeLabel.textContent = _TIMES_STR[timeSlider.value];
+
+timeSlider.oninput = (e) => {
+    _DELAY = _TIMES[timeSlider.value];
+    timeLabel.textContent = _TIMES_STR[timeSlider.value];
+};

@@ -407,7 +407,7 @@ const tick = (delay, run_id) => {
     setTimeout(tick, delay, delay, run_id);
 }
 
-document.getElementById('start-button').onclick = () => runWithDelay(1000);
+document.getElementById('start-button').onclick = () => runWithDelay(_DELAY);
 document.getElementById('start-button').onmouseenter = () => highlight(_PTR);
 document.getElementById('start-button').onmouseleave = () => { if (_IDLE) highlight(-1); }
 
