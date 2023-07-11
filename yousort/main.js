@@ -35,13 +35,15 @@ const _LENGTHf = () => {
 }
 
 let _needCompile = false;
+const textLabel = document.getElementById('text-label');
+const setNeedCompile = (bool) => {
+    if (bool) { textLabel.textContent = "TEXT *"; }
+    else { textLabel.textContent = "TEXT"; }
+    _needCompile = bool;
+    console.log('setting nc to ' + bool);
+}
 
-const compilerator = new MutationObserver(() => { /*console.log('compile');*/ _needCompile = true; refresh(false); });
-compilerator.observe(document.getElementById('text'), {
-    subtree: true,
-    childList: true,
-    characterData: true,
-})
+const compilerator = new MutationObserver(() => { /*console.log('compile');*/ setNeedCompile(true); refresh(false); });
 
 const marginSize =  (n) => {
     if (n < 15) return 5;
@@ -141,7 +143,7 @@ const _SUB_CODES = ['val-input', 'expression', 'value']
 
 const executeInstruction = () => {
     if (_needCompile) {
-        _needCompile = !compileInstructions();
+        setNeedCompile(!compileInstructions());
     }
 
     if (_PTR >= _INSTRUCTIONS.length || _needCompile) {
@@ -200,7 +202,7 @@ const executeInstruction = () => {
         msg += err;
         alert(msg);
         _PTR = 0; // if you errored restart it
-        _needCompile = true; // if you errored rewrite it
+        setNeedCompile(true); // if you errored rewrite it
         return false;
     }
 
@@ -368,7 +370,7 @@ let _RUN_ID = 0;
 
 const runWithDelay = (delay) => {
     if (_needCompile) {
-        _needCompile = !compileInstructions();
+        setNeedCompile(!compileInstructions());
         if (_needCompile) { return; }
     }
     _IDLE = false;
@@ -380,7 +382,7 @@ const runWithDelay = (delay) => {
 
 const tick = (delay, run_id) => {
     if (_needCompile) {
-        _needCompile = !compileInstructions();
+        setNeedCompile(!compileInstructions());
         if (_needCompile) { return; }
     }
     if (_RUN_ID != run_id || _PTR >= _INSTRUCTIONS.length) {
@@ -499,3 +501,10 @@ document.getElementById('value-set').onclick = () => {
 
 drawBars(_ARR);
 refresh(true);
+
+// setTimeout(() => { setNeedCompile(false); }, 1);
+compilerator.observe(document.getElementById('text'), {
+    subtree: true,
+    childList: true,
+    characterData: true,
+})
