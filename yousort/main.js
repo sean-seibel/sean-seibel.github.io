@@ -36,12 +36,21 @@ const _LENGTHf = () => {
 
 let _needCompile = false;
 const textLabel = document.getElementById('text-label');
+const buildButton = document.getElementById('build-button');
 const setNeedCompile = (bool) => {
-    if (bool) { textLabel.textContent = "TEXT *"; }
-    else { textLabel.textContent = "TEXT"; }
+    if (bool) { // yes need compile
+        textLabel.textContent = "TEXT *";
+        buildButton.classList.remove('disabled');
+    } else {
+        textLabel.textContent = "TEXT";
+        buildButton.classList.add('disabled');
+    }
     _needCompile = bool;
-    console.log('setting nc to ' + bool);
 }
+
+buildButton.onclick = () => {
+    setNeedCompile(!compileInstructions());
+};
 
 const compilerator = new MutationObserver(() => { /*console.log('compile');*/ setNeedCompile(true); refresh(false); });
 
@@ -358,11 +367,17 @@ const setStopActive = (active) => {
         document.getElementById('step-button').classList.add('disabled');
         document.getElementById('stop-button').classList.remove('disabled');
         document.getElementById('pause-button').classList.remove('disabled');
+        document.getElementById('time-slider').classList.add('disabled');
+        document.getElementById('text').classList.add('disabled-no-opacity');
+        document.getElementById('length-input').focus();
+        document.getElementById('length-input').blur(); // this is genius
     } else {
         document.getElementById('start-button').classList.remove('disabled');
         document.getElementById('step-button').classList.remove('disabled');
         document.getElementById('stop-button').classList.add('disabled');
         document.getElementById('pause-button').classList.add('disabled');
+        document.getElementById('time-slider').classList.remove('disabled');
+        document.getElementById('text').classList.remove('disabled-no-opacity');
     }
 }
 
@@ -412,7 +427,7 @@ document.getElementById('start-button').onmouseenter = () => highlight(_PTR);
 document.getElementById('start-button').onmouseleave = () => { if (_IDLE) highlight(-1); }
 
 const stop = (reset) => {
-    if (reset) { _PTR = 0; }
+    if (reset) { _PTR = 0; refresh(); }
     _RUN_ID++;
     setStopActive(false);
     highlight(-1);
@@ -507,4 +522,4 @@ compilerator.observe(document.getElementById('text'), {
     subtree: true,
     childList: true,
     characterData: true,
-})
+});

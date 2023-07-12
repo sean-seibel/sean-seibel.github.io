@@ -323,3 +323,10 @@ timeSlider.oninput = (e) => {
     _DELAY = _TIMES[timeSlider.value];
     timeLabel.textContent = _TIMES_STR[timeSlider.value];
 };
+
+document.getElementById('dialog-close').onclick = () => {
+    document.getElementById('dialog').close();
+};
+document.getElementById('dialog-show').onclick = () => {
+    document.getElementById('dialog').showModal();
+};

@@ -16,6 +16,10 @@
     pointer-events: none;
 }
 
+.disabled-no-opacity {
+    pointer-events: none;
+}
+
 .highlighted, .highlighted * {
     background-color:rgb(255, 255, 100) !important;
 }

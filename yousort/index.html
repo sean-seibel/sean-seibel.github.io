@@ -10,6 +10,14 @@
         <title>Yousort</title>
     </head>
     <body>
+        <dialog id="dialog" class="border-2 border-orange-900 bg-orange-300 w-[50%] h-[80%]">
+            <div class="flex justify-between">
+                <p>Welcome to Yousort</p>
+                <button id="dialog-close" class="text-orange-900 leading-none text-5xl">×</button>
+            </div>
+            <p>DialogDialogDialogDialogDialogDialogDialogDialogDialogDialogDialog!!!</p>
+            
+        </dialog>
         <div class="w-screen h-screen">
             <div id="top-bar" class="h-[15%] bg-orange-200 min-h-fit flex items-end border-b-2 border-black">
                 <p class="text-3xl p-[1%] w-[17%] font-extralight text-right">Yousort</p>
@@ -18,9 +26,9 @@
                                 overflow-y-auto">
                     <div class="flex justify-around space-x-2 m-2">
                         <div class="space-y-1">
-                            <pre class="text-center">Control Panel</pre>
+                            <pre class="text-center">  Control Panel  </pre>
                             <div class="grid grid-flow-col justify-stretch space-x-1">
-                                <!-- <button id="build-button" class="disabled border-2 border-gray-900 bg-gray-300 text-gray-700 font-extrabold">🔨</button> -->
+                                <button id="build-button" class="disabled border-2 border-gray-900 bg-gray-300 text-gray-700 font-extrabold">🔧</button>
                                 <button id="start-button" class="border-2 border-green-900 bg-green-300 text-green-700">▶</button>
                                 <button id="step-button" class="border-2 border-green-900 bg-green-300 text-green-700 font-bold">(1)</button>
                                 <button id="stop-button" class="disabled border-2 border-red-900 bg-red-300 text-red-700">■</button>
@@ -62,6 +70,11 @@
                             <div class="grid grid-flow-col justify-stretch space-x-1">
                                 <button id="copy-button" class="border-2 border-orange-900 bg-orange-300 text-orange-700 text-3xl">⎘</button>
                                 <button id="paste-button" class="border-2 border-orange-900 bg-orange-300 text-orange-700 text-3xl">✍</button>
+                            </div>
+                            <div class="grid grid-flow-col justify-center space-x-1">
+                                <button id="dialog-show" class="border-2 border-orange-900 bg-orange-300">
+                                    <pre class="text-orange-700 text-lg"> i </pre>
+                                </button>
                             </div>
                         </div>
                     </div>
