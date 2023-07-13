@@ -181,6 +181,13 @@ const executeInstruction = () => {
                 break;
             case _STORE:
                 if (Number.isInteger(+command[1])) { throw Error('Can not use number as a symbol. (' + command[1] + ')'); }
+                if (command[1] == 'LENGTH') {
+                    const new_l = computeSub(command[2], bar_l);
+                    if (!setLength(new_l)) {
+                        throw Error('Invalid value for LENGTH: ' + new_l);
+                    }
+                    break;
+                }
                 _VAR_TABLE.set(
                     command[1], // don't let them do this if its a number? bc you can't retrieve it
                     computeSub(command[2], bar_l)
@@ -225,7 +232,9 @@ const executeInstruction = () => {
 const computeSub = (sub, nodes) => {
     switch (sub[0]) {
         case _VAL_INPUT:
-            if (Number.isInteger(+sub[1])) {
+            if (sub[1] == 'LENGTH') {
+                return _LENGTHf();
+            } else if (Number.isInteger(+sub[1])) {
                 return Number(sub[1]);
             } else {
                 if (!_VAR_TABLE.has(sub[1])) { throw Error('Error: symbol not found: ' + sub[1]); }
@@ -257,7 +266,6 @@ const compileInstructions = () => {
     });
     if (failed) { return false; }
     _VAR_TABLE.clear();
-    _VAR_TABLE.set("LENGTH", _LENGTH);
     _FLAG_TABLE.clear();
     for(p = 0; p < instructions.length; p++) {
         if (instructions[p][0] == _FLAG) {
@@ -494,7 +502,10 @@ document.getElementById('length-import').onclick = () => {
 }
 
 document.getElementById('length-copy').onclick = () => {
-    navigator.clipboard.writeText(JSON.stringify(_ARRf())).then(
+    navigator.clipboard.writeText(
+        JSON.stringify(_ARRf())
+        .replace(/[\[\]"]/g, "")
+        ).then(
         () => { alert('Copied values!'); },
         () => { alert('Copy failed :('); }
     );
