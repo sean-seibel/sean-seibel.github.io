@@ -353,7 +353,13 @@ document.getElementById('paste-button').onclick = () => {
 
 const fromCookie = getCookie('i');
 if (fromCookie) {
-    loadFromInstructions(fromCookie);
+    try {
+        loadFromInstructions(fromCookie);
+    } catch (err) {
+        console.log(fromCookie);
+        alert('Could not load from cookie.');
+        document.getElementById('text').replaceChildren();
+    }
     compileInstructions();
 }
 
