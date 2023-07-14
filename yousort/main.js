@@ -348,7 +348,11 @@ document.getElementById('copy-button').onclick = () => {
 
 document.getElementById('paste-button').onclick = () => {
     let pasteText = prompt('Paste here:');
-    loadFromInstructions(pasteText);
+    try {
+        loadFromInstructions(pasteText);
+    } catch (err) {
+        alert('Could not process paste.');
+    }
 }
 
 const fromCookie = getCookie('i');
