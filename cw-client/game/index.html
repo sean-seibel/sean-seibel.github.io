@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Connect Whatever</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="output.css">
+    </head>
+    <body class="bg-orange-200">
+        <div class="flex h-screen w-screen">
+            <div id="turnBar" class="w-[23%] bg-orange-300 py-[5%]">
+                <div class="flex flex-col justify-between h-full">
+                    <div class="flex w-full justify-between">
+                        <button id="backButton" class="back-button"><-</button>
+                        <pre id="theirTime" class="time-display">99:99</pre>
+                    </div>
+                    <div id="state" class="invisible"></div>
+                    <div class="flex w-full justify-end">
+                        <pre id="myTime" class="time-display">00:00</pre>
+                    </div>
+                </div>
+            </div>
+            <div id="boardBar" class="w-[54%] p-[5%] uninteractable">
+                <div id="board" class="w-full h-full bg-orange-800 flex justify-items-start"></div>
+            </div>
+            <div id="chatBar" class="w-[23%] bg-orange-300 p-[1%]">
+                <div id="chat" class="bg-slate-50 h-[80%] w-full overflow-y-auto"></div>
+                <div class="h-[5%]"></div>
+                <div class="flex h-[10%]">
+                    <textarea id="chatInput" class="block w-[90%] h-full resize-none" placeholder="Send message"></textarea>
+                    <button id="chatButton" class="w-[10%] h-full bg-blue-500 text-white hover:bg-blue-400 hover:text-blue-800 ">⇧</button>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="../env.js"></script>
+    <!-- <script src="HackTimer.min.js"></script> -->
+    <script src="api.js"></script>
+    <script src="game.js"></script>
+</html>

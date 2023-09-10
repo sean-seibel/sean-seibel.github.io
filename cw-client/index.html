@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Connect Whatever</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="output.css">
+    </head>
+    <body class="bg-orange-200">
+        <dialog id="dialog"></dialog>
+        <div class="flex w-screen h-screen">
+            <div class="w-[80%] bg-orange-200 p-4 space-y-4 [&>*]:space-x-[4%] [&>*]:p-4">
+                <div id="title" class="font-serif w-fit tracking-wide m-4 bg-red-500 text-yellow-200 text-2xl">Connect Whatever</div>
+                <div class="flex">
+                    <div id="chooseGame" class="space-y-4 [&>*]:space-x-[4%] [&>*]:p-4">
+                        <p>Game Type</p>
+                        <select id="presets">
+                            <option value="custom">Custom</option>
+                            <option value="connect4">Connect 4</option>
+                            <option value="ticTacTo">Tic-Tac-To</option>
+                            <option value="gomoku">Gomoku</option>
+                        </select>
+                        <div class="flex">
+                            <div>Board Width</div>
+                            <input id="widthInput" type="number" min="1">
+                        </div>
+                        <div class="flex">
+                            <div>Board Height</div>
+                            <input id="heightInput" type="number" min="1">
+                        </div>
+                        <div class="flex">
+                            <div>Connect How Many?</div>
+                            <input id="connectInput" type="number" min="1">
+                        </div>
+                        <div class="flex">
+                            <div>Gravity</div>
+                            <input id="gravityInput" type="checkbox">
+                        </div>
+                    </div>
+                    <div id="chooseTime" class="space-y-4 [&>*]:space-x-[4%] [&>*]:p-4">
+                        <p>Time Control</p>
+                        <select id="presetsTime">
+                            <option value="custom">Custom</option>
+                            <option value="blitz">Blitz</option>
+                            <option value="rapid">Rapid</option>
+                            <option value="classical">Classical</option>
+                        </select>
+                        <div class="flex">
+                            <div>Minutes</div>
+                            <input id="minutesInput" type="number" min="1">
+                        </div>
+                        <div class="flex">
+                            <div>Increment (seconds)</div>
+                            <input id="secondsInput" type="number" min="0">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex">
+                    <button id="searchButton">Search</button>
+                    <button id="createButton">Create Game</button>
+                </div>
+            </div>
+            <div id="roomList" class="w-[20%] bg-slate-100">
+                <div id="gamesLabel">
+                    <pre class="text-center text-3xl">Open Games</pre>
+                    <pre id="gameCount" class="w-full text-center text-2xl">Searching...</pre>
+                </div>
+                <div id="gamesList" class="bg-slate-400 w-full overflow-auto p-[3%] space-y-[3%]"></div>
+            </div>
+        </div>
+    </body>
+    <script src="env.js"></script>
+    <script src="api.js"></script>
+    <script src="main.js"></script>
+</html>

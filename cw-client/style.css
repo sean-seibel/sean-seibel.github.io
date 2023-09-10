@@ -1,0 +1,73 @@
+.gamecard {
+    width: 100%;
+    --tw-bg-opacity: 1;
+    background-color: rgb(253 230 138 / var(--tw-bg-opacity));
+    border-radius: 0.375rem;
+    padding: 3%;
+}
+
+.gamecard > * {
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: larger;
+    display: flex;
+    justify-content: space-between;
+}
+
+.joinButton {
+    color: #FFF;
+    background-color: #08F;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    padding-left: 4%;
+    padding-right: 4%;
+    border-radius: 20%;
+}
+
+.joinButton:hover {
+    background-color: #2BF;
+}
+
+#searchButton {
+    color: #FFF;
+    background-color: #C08;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    padding-left: 4%;
+    padding-right: 4%;
+    border-radius: 1rem;
+}
+
+#searchButton:hover {
+    background-color: #F2C;
+}
+
+#createButton {
+    color: #FFF;
+    background-color: #0C4;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    padding-left: 4%;
+    padding-right: 4%;
+    border-radius: 1rem;
+}
+
+#createButton:hover {
+    background-color: #2E6;
+}
+
+dialog {
+    background-color: #AAA;
+    color: #333;
+    border-color: #444;
+    border-width: 5px;
+    font-size: 200%;
+}
+
+dialog::backdrop {
+    background-color: #000;
+    opacity: 0.4;
+}
+
+.forbidChoose input {
+    pointer-events: none;
+}

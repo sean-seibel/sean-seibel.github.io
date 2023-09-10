@@ -1,0 +1,86 @@
+.square {
+    background-color: rgb(248, 222, 185);
+    padding: 5%;
+}
+
+.square > * {
+    width: 100%;
+    height: 100%;
+    border-radius: 45%;
+}
+
+.uninteractable * {
+    pointer-events: none;
+}
+
+.interact .reveal:hover * {
+    visibility: visible !important;
+}
+
+.reveal-always * {
+    visibility: visible !important;
+    opacity: 100% !important;
+}
+
+.highlightPiece {
+    opacity: 50%;
+    visibility: hidden;
+}
+
+.red-piece {
+    box-sizing: border-box;
+    background-color: #F00;
+    border-width: 3px;
+    border-color: #B00;
+}
+
+.yellow-piece {
+    box-sizing: border-box;
+    background-color: #FF0;
+    border-width: 3px;
+    border-color: #BB0;
+}
+
+.chat {
+    padding: 2%;
+    display: flex;
+}
+
+.chat > *:first-child {
+    font-style: italic;
+}
+
+.chat > * {
+    padding: 2px;
+}
+
+.time-display {
+    font-size: larger;
+    margin: 5%;
+    
+}
+
+.game-started .red-time {
+    color: #F00;
+    background-color: #DDD;
+}
+
+.game-started .yellow-time {
+    color: #FF0;
+    background-color: #666;
+}
+
+.back-button {
+    background-color: #07F;
+    color: #FFF;
+    margin-left: 5%;
+    padding-left: 6%;
+    padding-right: 6%;
+    font-size: larger;
+    border-radius: 5%;
+}
+
+.back-button:hover {
+    background-color: #8CF;
+    color: #00F;
+}
