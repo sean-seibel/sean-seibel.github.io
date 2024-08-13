@@ -101,9 +101,9 @@ const dragBars = dragula([bars], {
     barFrom = getChildIndex(bars, (n) => { return n == el });
 }).on('drop', (el) => {
     const barTo = getChildIndex(bars, (n) => { return n == el });
-    const temp = _ARR[barFrom];
-    _ARR.splice(barFrom, 1);
-    _ARR.splice(barTo, 0, temp);
+    const temp = _INITIAL_ARR[barFrom];
+    _INITIAL_ARR.splice(barFrom, 1);
+    _INITIAL_ARR.splice(barTo, 0, temp);
     //console.log(_ARR); // ^ this reflects dragged bars in _ARR
 });
 
@@ -170,9 +170,6 @@ document.onkeydown = (e) => {
             _PTR = 0;
             refresh();
             break;
-        case "r":
-            randomizeARR();
-            break;
         case " ":
             highlight(_PTR);
             executeInstruction();
@@ -180,7 +177,7 @@ document.onkeydown = (e) => {
         case "p":
             dragSub.containers.forEach((val) => {
                 console.log(val.parentElement);
-            })
+            });
             break;
         case "Escape": selectBar(null); break;
         case "h": highlight(-1); break;

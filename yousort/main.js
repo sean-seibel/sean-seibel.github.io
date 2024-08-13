@@ -7,8 +7,8 @@ const build = (l) => {
 }
 
 let _LENGTH = 32;
-let _ARR = build(_LENGTH);
-let _MAX = Math.max(..._ARR);
+let _INITIAL_ARR = build(_LENGTH);
+let _MAX = Math.max(..._INITIAL_ARR);
 let _IDLE = true;
 let _SELECTED = null;
 
@@ -34,19 +34,10 @@ const _LENGTHf = () => {
     return document.getElementById('bar-zone').childElementCount;
 }
 
-let _needCompile = false;
+
 const textLabel = document.getElementById('text-label');
 const buildButton = document.getElementById('build-button');
-const setNeedCompile = (bool) => {
-    if (bool) { // yes need compile
-        textLabel.textContent = "TEXT *";
-        buildButton.classList.remove('disabled');
-    } else {
-        textLabel.textContent = "TEXT";
-        buildButton.classList.add('disabled');
-    }
-    _needCompile = bool;
-}
+
 
 buildButton.onclick = () => {
     setNeedCompile(!compileInstructions());
@@ -61,29 +52,6 @@ const marginSize =  (n) => {
     if (n < 200) return 2;
     if (n < 350) return 1;
     return 0;
-}
-
-const alignBarHeight = (bar) => {
-    bar.style.height = "calc(100% * " + (parseInt(bar.getAttribute('value'))/_MAX) + ")";
-}
-
-const setBar = (bar, n) => {
-    const wasMax = bar.getAttribute('value') == _MAX;
-    bar.setAttribute('value', n);
-    if (wasMax || n > _MAX) {
-        if (n < _MAX) {
-            bar.parentNode.childNodes.forEach((e) => {
-                _MAX = Math.max(_MAX, e.getAttribute('value'));
-            });
-        } else {
-            _MAX = n;
-        }
-        bar.parentNode.childNodes.forEach((e) => {
-            alignBarHeight(e);
-        });
-    } else {
-        alignBarHeight(bar);
-    }
 }
 
 let lastLength = -1;
@@ -133,210 +101,6 @@ const getChildIndex = (par, pred) => {
     });
 };
 
-let _INSTRUCTIONS = [];
-let _PTR = 0;
-let _VAR_TABLE = new Map(); // string to number
-let _FLAG_TABLE = new Map(); // string to number
-
-const _SWAP = 0;
-const _SET = 1;
-const _STORE = 2;
-const _FLAG = 3;
-const _JUMP = 4;
-const _JUMPIF = 5;
-const _VAL_INPUT = 0;
-const _EXPRESSION = 1;
-const _VALUE = 2;
-const _INST_CODES = ['swap', 'set', 'store', 'flag', 'jump', 'jumpif'];
-const _SUB_CODES = ['val-input', 'expression', 'value']
-
-const executeInstruction = () => {
-    if (_needCompile) {
-        setNeedCompile(!compileInstructions());
-    }
-
-    if (_PTR >= _INSTRUCTIONS.length || _needCompile) {
-        return;
-    }
-
-    let command = _INSTRUCTIONS[_PTR];
-
-    const bar_l = bars.childNodes;
-
-    try {
-        switch (command[0]) {
-            case _SWAP:
-                let i1 = computeSub(command[1], bar_l);
-                let i2 = computeSub(command[2], bar_l);
-                if (i1 < 0 || i1 >= _LENGTHf()) { throw Error('Out of bounds. ' + i1 + ' not within [0, ' + _LENGTHf() + ')'); }
-                if (i2 < 0 || i2 >= _LENGTHf()) { throw Error('Out of bounds. ' + i2 + ' not within [0, ' + _LENGTHf() + ')'); }
-                let temp = bar_l[i1].getAttribute('value');
-                setBar(bar_l[i1], bar_l[i2].getAttribute('value'));
-                setBar(bar_l[i2], temp);
-                break;
-            case _SET:
-                let set_index = computeSub(command[1], bar_l);
-                if (set_index < 0 || set_index >= _LENGTHf()) { throw Error('Out of bounds. ' + set_index + ' not within [0, ' + _LENGTHf() + ')'); }
-                setBar(bar_l[computeSub(command[1], bar_l)], computeSub(command[2], bar_l));
-                break;
-            case _STORE:
-                if (Number.isInteger(+command[1])) { throw Error('Can not use number as a symbol. (' + command[1] + ')'); }
-                if (command[1] == 'LENGTH') {
-                    const new_l = computeSub(command[2], bar_l);
-                    if (!setLength(new_l)) {
-                        throw Error('Invalid value for LENGTH: ' + new_l);
-                    }
-                    break;
-                }
-                _VAR_TABLE.set(
-                    command[1], // don't let them do this if its a number? bc you can't retrieve it
-                    computeSub(command[2], bar_l)
-                );
-                break;
-            case _FLAG: break;
-            case _JUMP:
-                if (!_FLAG_TABLE.has(command[1])) { throw Error('Flag not found: ' + command[1]); }
-                _PTR = _FLAG_TABLE.get(command[1]); // will drop you just after the flag
-                break;
-            case _JUMPIF:
-                if (!_FLAG_TABLE.has(command[1])) { throw Error('Flag not found: ' + command[1]); }
-                if (computeSub(command[2], bar_l)) {
-                    _PTR = _FLAG_TABLE.get(command[1]); // will drop you just after the flag
-                }
-                break;
-        }
-    } catch (err) { // name errors, out of bounds errors?
-        let msg = 'Runtime error at instruction ' + _PTR + ': ';
-        switch (command[0]) {
-            case _SWAP: msg += 'swap\n'; break;
-            case _SET: msg += 'set\n'; break;
-            case _STORE: msg += 'store\n'; break;
-            case _FLAG: msg += 'flag\n'; break;
-            case _JUMP: msg += 'jump\n'; break;
-            case _JUMPIF: msg += 'jumpif\n'; break;
-        }
-        msg += err;
-        alert(msg);
-        _PTR = 0; // if you errored restart it
-        setNeedCompile(true); // if you errored rewrite it
-        return false;
-    }
-
-    _PTR++;
-    console.log(_ARRf());
-    console.log(_VAR_TABLE);
-    refresh(); // this might have to redraw bars if you use [set]
-    return true;
-};
-
-const computeSub = (sub, nodes) => {
-    switch (sub[0]) {
-        case _VAL_INPUT:
-            if (sub[1] == 'LENGTH') {
-                return _LENGTHf();
-            } else if (Number.isInteger(+sub[1])) {
-                return Number(sub[1]);
-            } else {
-                if (!_VAR_TABLE.has(sub[1])) { throw Error('Error: symbol not found: ' + sub[1]); }
-                return _VAR_TABLE.get(sub[1]);
-            }
-        case _EXPRESSION:
-            let func = _FUNCS[sub[1]];
-            return func(computeSub(sub[2], nodes), computeSub(sub[3], nodes));
-        case _VALUE:
-            return nodes[computeSub(sub[1], nodes)].getAttribute('value');
-    }
-}
-
-const compileInstructions = () => {
-    let instructions = [];
-    const text = document.getElementById("text");
-    let failed = false;
-    text.childNodes.forEach((node) => {
-        if (node?.classList && !failed) {
-            try {
-                const inst = compileInstruction(node);
-                //console.log(inst);
-                instructions.push(inst);    
-            } catch (err) {
-                alert('Compilation error: Error on instruction ' + instructions.length + '.\nMust fix before running.\n' + err);
-                failed = true;
-            }
-        }
-    });
-    if (failed) { return false; }
-    _VAR_TABLE.clear();
-    _FLAG_TABLE.clear();
-    for(p = 0; p < instructions.length; p++) {
-        if (instructions[p][0] == _FLAG) {
-            _FLAG_TABLE.set(instructions[p][1], p);
-        }
-    }
-    //console.log(_FLAG_TABLE);
-    console.log(instructions);
-    _INSTRUCTIONS = instructions;
-    setCookie('i', JSON.stringify(_INSTRUCTIONS), 365);
-    return true;
-}
-
-const compileInstruction = (instNode) => {
-    let inst = [];
-    inst.push(
-        _INST_CODES.findIndex((st) => st == instNode.classList.item(0))
-    );
-    // inst.push(instNode); // for highlighting (if you add this update indicies in computing somehow)
-    const accepts = childrenWithClass(instNode, 'accepts1');
-    const inputs = childrenWithClass(instNode, 'val-input');
-    switch (inst[0]) {
-        case _SWAP:
-            inst.push(compileSubcomputation(accepts[0]));
-            inst.push(compileSubcomputation(accepts[1]));
-            break;
-        case _SET:
-            inst.push(compileSubcomputation(accepts[0]));
-            inst.push(compileSubcomputation(accepts[1]));
-            break;
-        case _STORE:
-            inst.push(inputs[0].textContent);
-            inst.push(compileSubcomputation(accepts[0]));
-            break;
-        case _FLAG:
-            inst.push(inputs[0].textContent);
-            break;
-        case _JUMP:
-            inst.push(inputs[0].textContent);
-            break;
-        case _JUMPIF:
-            inst.push(inputs[0].textContent);
-            inst.push(compileSubcomputation(accepts[0]));
-            break;
-    }
-    return inst;
-};
-
-const compileSubcomputation = (accept1) => {
-    const child = accept1.firstChild;
-    if (!child) { return null; }
-    // const cl = child.classList?.item(0);
-    const cl = _SUB_CODES.findIndex((st) => st == child.classList?.item(0))
-    const operands = childrenWithClass(child, 'accepts1'); // only immediate children
-    switch (cl) {
-        case _VAL_INPUT:
-            if (!child.textContent) { throw Error('Empty input box'); }
-            return [_VAL_INPUT, child.textContent];
-        case _EXPRESSION:
-            return [
-                _EXPRESSION,
-                child.getElementsByClassName("op-sel")[0].value,
-                compileSubcomputation(operands[0]),
-                compileSubcomputation(operands[1])
-            ];
-        case _VALUE:
-            return [_VALUE, compileSubcomputation(operands[0])];
-    }
-    return null;
-};
-
 document.getElementById('randomize-button').onclick = () => { drawBars(randomizeARRf()); };
 
 document.getElementById('copy-button').onclick = () => {
@@ -361,7 +125,7 @@ if (fromCookie) {
         loadFromInstructions(fromCookie);
     } catch (err) {
         console.log(fromCookie);
-        alert('Could not load from cookie.');
+        alert('Could not load from cookie ' + fromCookie);
         document.getElementById('text').replaceChildren();
     }
     compileInstructions();
@@ -402,10 +166,8 @@ const setStopActive = (active) => {
 let _RUN_ID = 0;
 
 const runWithDelay = (delay) => {
-    if (_needCompile) {
-        setNeedCompile(!compileInstructions());
-        if (_needCompile) { return; }
-    }
+    tryCompileIfNeeded();
+    if (_needCompile) { return; }
     _IDLE = false;
     setStopActive(true);
     console.log('running');
@@ -414,10 +176,8 @@ const runWithDelay = (delay) => {
 }
 
 const tick = (delay, run_id) => {
-    if (_needCompile) {
-        setNeedCompile(!compileInstructions());
-        if (_needCompile) { return; }
-    }
+    tryCompileIfNeeded();
+    if (_needCompile) { return; }
     if (_RUN_ID != run_id || _PTR >= _INSTRUCTIONS.length) {
         _IDLE = true;
         if (_PTR >= _INSTRUCTIONS.length) { _PTR = 0; /*refresh(false);*/ }
@@ -479,7 +239,7 @@ const setLength = (l) => {
     document.getElementById('length-input').value = _LENGTHf();
     return true;
 };
-setLength(_ARR.length);
+setLength(_INITIAL_ARR.length);
 
 document.getElementById('length-set').onclick = () => {
     // set length, clear input, alert if unsuccessful
@@ -535,7 +295,7 @@ document.getElementById('value-set').onclick = () => {
     valIn.value = _SELECTED.getAttribute('value');
 };
 
-drawBars(_ARR);
+drawBars(_INITIAL_ARR);
 refresh(true);
 
 // setTimeout(() => { setNeedCompile(false); }, 1);
@@ -544,3 +304,14 @@ compilerator.observe(document.getElementById('text'), {
     childList: true,
     characterData: true,
 });
+
+const testobj = [
+    ["≤", 12],
+    ["–", 13],
+    ["45", 34],
+    [" ", 35],
+]
+
+const testobj2 = JSON.parse('[[2,"noneswapped",[0,"0"]],[3,"start"],[5,"end",[0,"noneswapped"]],[2,"noneswapped",[0,"1"]],[2,"i",[0,"0"]],[3,"loop"],[5,"start",[1,"=",[0,"i"],[1,"–",[0,"LENGTH"],[0,"1"]]]],[5,"noswap",[1,"≤",[2,[0,"i"]],[2,[1,"+",[0,"i"],[0,"1"]]]]],[0,[0,"i"],[1,"+",[0,"i"],[0,"1"]]],[2,"noneswapped",[0,"0"]],[3,"noswap"],[2,"i",[1,"+",[0,"i"],[0,"1"]]],[4,"loop"],[3,"end"]]')
+
+console.log("test : " + JSON.stringify(testobj2));
