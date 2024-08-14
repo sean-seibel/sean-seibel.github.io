@@ -305,13 +305,13 @@ compilerator.observe(document.getElementById('text'), {
     characterData: true,
 });
 
-const testobj = [
-    ["≤", 12],
-    ["–", 13],
-    ["45", 34],
-    [" ", 35],
-]
+// const testobj = [
+//     ["≤", 12],
+//     ["–", 13],
+//     ["45", 34],
+//     [" ", 35],
+// ]
 
-const testobj2 = JSON.parse('[[2,"noneswapped",[0,"0"]],[3,"start"],[5,"end",[0,"noneswapped"]],[2,"noneswapped",[0,"1"]],[2,"i",[0,"0"]],[3,"loop"],[5,"start",[1,"=",[0,"i"],[1,"–",[0,"LENGTH"],[0,"1"]]]],[5,"noswap",[1,"≤",[2,[0,"i"]],[2,[1,"+",[0,"i"],[0,"1"]]]]],[0,[0,"i"],[1,"+",[0,"i"],[0,"1"]]],[2,"noneswapped",[0,"0"]],[3,"noswap"],[2,"i",[1,"+",[0,"i"],[0,"1"]]],[4,"loop"],[3,"end"]]')
+// const testobj2 = JSON.parse('[[2,"noneswapped",[0,"0"]],[3,"start"],[5,"end",[0,"noneswapped"]],[2,"noneswapped",[0,"1"]],[2,"i",[0,"0"]],[3,"loop"],[5,"start",[1,"=",[0,"i"],[1,"–",[0,"LENGTH"],[0,"1"]]]],[5,"noswap",[1,"≤",[2,[0,"i"]],[2,[1,"+",[0,"i"],[0,"1"]]]]],[0,[0,"i"],[1,"+",[0,"i"],[0,"1"]]],[2,"noneswapped",[0,"0"]],[3,"noswap"],[2,"i",[1,"+",[0,"i"],[0,"1"]]],[4,"loop"],[3,"end"]]')
 
-console.log("test : " + JSON.stringify(testobj2));
+// console.log("test : " + JSON.stringify(testobj2));

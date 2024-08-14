@@ -1,10 +1,10 @@
 /* certain characters can't exist in cookies */
 const toAscii = (s) => {
-    return s.replace("–", "-").replace("≤", "<=").replace("≥", ">=");
+    return s.replace("–", "-").replace("≤", "<=").replace("≥", ">=").replace("≠", "!=");
 }
 
 const fromAscii = (s) => {
-    return s.replace("-", "–").replace("<=", "≤").replace(">=", "≥");
+    return s.replace("-", "–").replace("<=", "≤").replace(">=", "≥").replace("!=", "≠");
 }
 
 function setCookie(name,value,days) {

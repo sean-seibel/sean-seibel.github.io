@@ -117,8 +117,9 @@ const _FUNCS = {
     "/": (a, b) => Math.floor(a / b),  
     "%": (a, b) => a % b, 
     "=": (a, b) => a == b ? 1 : 0, 
+    "≠": (a, b) => a != b ? 1 : 0, 
     ">": (a, b) => a > b ? 1 : 0, 
-    "<": (a, b) => a < b ? 1 : 0, 
+    "<": (a, b) => a < b ? 1 : 0,// { let result = a < b ? 1 : 0; console.log("comparing " + a + " < " + b + ", result: " + result); return result }, 
     "≥": (a, b) => a >= b ? 1 : 0, 
     "≤": (a, b) => a <= b ? 1 : 0, 
     "r": (a, b) => Math.floor(Math.random() * (b-a)) + a,
@@ -302,7 +303,7 @@ const loadSub = (sub) => {
     }
 };
 
-const _TIMES_STR = ['5.00', '3.00', '1.00', '0.75', '0.50', '0.30', '0.20', '0.10'];
+const _TIMES_STR = ['5.00', '3.00', '1.00', '0.75', '0.50', '0.30', '0.20', '0.10', '0.05'];
 const _TIMES = _TIMES_STR.map((s) => {
     return parseFloat(s) * 1000;
 });
