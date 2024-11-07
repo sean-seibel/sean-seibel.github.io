@@ -1,3 +1,4 @@
 [submodule "cw-client"]
 	path = cw-client
 	url = https://github.com/sean-seibel/cw-client.git
+	branch = master
